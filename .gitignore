@@ -1,0 +1,5 @@
+# Only allow .cpp files
+*
+!.gitignore
+!*.cpp
+!Makefile
