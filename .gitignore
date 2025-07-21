@@ -9,3 +9,6 @@
 !*/
 !*.cpp
 !*.h
+
+# Ignore vs code files
+.vscode
