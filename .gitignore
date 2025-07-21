@@ -1,5 +1,11 @@
-# Only allow .cpp files
+# Ignore everything
 *
+
+# Allow needed files
 !.gitignore
-!*.cpp
 !Makefile
+
+# Allow C++ files/directories
+!*/
+!*.cpp
+!*.h
