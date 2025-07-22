@@ -1,55 +1,96 @@
 #include <iostream>
 #include <vector>
 
-using std::cout;
-using std::cin;
-using std::endl;
-using std::vector;
+using namespace std;
 
-void print(const vector<vector<int>>& mat) {
-	if (mat.empty()) return;
+void print(int** mat, const int rows, const int cols) {
+	if (rows < 1 || cols < 1) return;
 
-	const int M(mat.size());
-	const int N(mat[0].size());
-
-	for (const vector<int>& row : mat) {
-		for (const int& value : row) {
-			cout << value << " ";
+	for (int i(0); i < rows; ++i) {
+		for (int j(0); j < cols; ++j) {
+			cout << mat[i][j] << " ";
 		}
 		cout << "\n";
 	}
 }
 
-void getValues(vector<vector<int>>& mat) {
-	if (mat.empty()) return;
+bool getValues(const char c, int** mat, const int rows, const int cols) {
+	cout << "Enter the values for matrix " << c << " (" << rows << ", " << cols << "): \n";
 
-	for (vector<int>& row : mat) {
-		for (int& value : row) {
-			cin >> value;
+	for (int i(0); i < rows; ++i) {
+		for (int j(0); j < cols; ++j) {
+			if (!(cin >> mat[i][j])) {
+				cout << "ERROR: Invalid matrix input\n";
+				return false; 
+			}
 		}
 	}
+
+	return true;
 }
 
-vector<vector<int>> multiply(vector<vector<int>>& matA, vector<vector<int>>& matB) {
-	if (matA.empty() || matB.empty()) return {{}};
+bool isValid(const int option, const int matA_rows, const int matA_cols, const int matB_rows, const int matB_cols) {
+	if (matA_rows < 1 || matA_cols < 1 || matB_rows < 1 || matB_cols < 1) return false;
 
-	const int M(matA.size());
-	const int N(matA[0].size());
-	const int _N(matB.size());
-	const int P(matB[0].size());
-
-	if (N != _N) {
-		cout << "Error: Incompatible matrix sizes.";
-		cout << "Matrix A size (m x n): " << M << " x " << N << "\n";
-		cout << "Matrix B size (n x p): " << _N << " x " << P << "\n";
-		return {{}};
+	switch (option) {
+		case 1:
+			// Addition
+			if (matA_rows != matB_rows || matA_cols != matB_cols) {
+				cout << "Error: Incompatible matrix sizes.\n";
+				cout << "Matrix A size (m x n): " << matA_rows << " x " << matA_cols << "\n";
+				cout << "Matrix B size (n x p): " << matB_rows << " x " << matB_cols << "\n";
+				return false;
+			}
+			return true;
+		case 2:
+			// Multiplication
+			if (matA_cols != matB_rows) {
+				cout << "Error: Incompatible matrix sizes.\n";
+				cout << "Matrix A size (m x n): " << matA_rows << " x " << matA_cols << "\n";
+				cout << "Matrix B size (n x p): " << matB_rows << " x " << matB_cols << "\n";
+				return false;
+			}
+			return true;
+		default:
+			cout << "Error: Invalid option\n";
 	}
 
-	vector<vector<int>> matC(M, vector<int>(P, 0));
+	return false;
+}
 
-	for (size_t i(0); i < M; ++i) {
-		for (size_t j(0); j < P; ++j) {
-			for (size_t k(0); k < N; ++k) {
+int** newMatrix(const int rows, const int cols) {
+	int** mat = new int*[rows];
+	for (int i(0); i < rows; ++i) {
+		mat[i] = new int[cols];
+		for (int j(0); j < cols; ++j)
+			mat[i][j] = 0;
+	}
+
+	return mat;
+}
+
+void deleteMatrix(int** mat, const int rows) {
+	for (int i(0); i < rows; ++i)
+		delete[] mat[i];
+	delete[] mat;
+}
+
+int** add(int** matA, int** matB, const int rows, const int cols) {
+	int** matC( newMatrix(rows, cols) );
+
+	for (int i(0); i < rows; ++i)
+		for (int j(0); j < cols; ++j)
+			matC[i][j] += matA[i][j] + matB[i][j];
+
+	return matC;
+}
+
+int** multiply(int** matA, const int matA_rows, const int matA_cols, int** matB, const int matB_rows, const int matB_cols) {
+	int** matC( newMatrix(matA_rows, matB_cols) );
+
+	for (int i(0); i < matA_rows; ++i) {
+		for (int j(0); j < matB_cols; ++j) {
+			for (int k(0); k < matA_cols; ++k) {
 				matC[i][j] += matA[i][k] * matB[k][j];
 			}
 		}
@@ -58,28 +99,79 @@ vector<vector<int>> multiply(vector<vector<int>>& matA, vector<vector<int>>& mat
 	return matC;
 }
 
+int validate(const string& str) {
+	if (str.length() != 1 || !isdigit(str[0]))
+		return -1;
+	return stoi(str);
+}
+
+int getUserChoice() {
+	int choice;
+	string input;
+	string options(
+		"1. Add\n"
+    	"2. Multiply\n"
+		"\n"
+    	"Choose an option: "
+	);
+	string invalid("Invalid option.");
+
+	while (true) {
+		cout << options;
+		getline(cin, input);
+		cout << endl;
+
+		choice = validate(input);
+		if (choice == 1 || choice == 2)
+			return choice;
+
+		cout << invalid << endl;
+	}
+
+	return -1;
+}
+
 int main() {
-	// ADD ADDITION TOOO
-	int M, N, P;
+	const int choice( getUserChoice() );
+	int matA_rows, matA_cols, matB_rows, matB_cols;
+	while (true) {
+		cout << "Enter the dimensions for matrix A (rows, cols): ";
+		cin >> matA_rows >> matA_cols;
+		cout << "Enter the dimensions for matrix B (rows, cols): ";
+		cin >> matB_rows >> matB_cols;
+		
+		if (isValid(choice, matA_rows, matA_cols, matB_rows, matB_cols))
+			break;
+	}
 
-	cout << "Enter the dimensions for matrix A (m x n): ";
-	cin >> M >> N;
+	int** matA( newMatrix(matA_rows, matA_cols) );
+	int** matB( newMatrix(matB_rows, matB_cols) );
+	int** matC;
 
-	cout << "Enter the second dimension (p) for matrix B (" << N << " x p): ";
-	cin >> P;
-
-	vector<vector<int>> matA(M, vector<int>(N, 0));
-	vector<vector<int>> matB(N, vector<int>(P, 0));
-
-	cout << "Enter the values (integer) for matrix A (" << M << " x " << N << "):\n";
-	getValues(matA);
-
-	cout << "Enter the values (integer) for matrix B (" << N << " x " << P << "):\n";
-	getValues(matB);
+	while (!getValues('A', matA, matA_rows, matA_cols));
+	while (!getValues('B', matB, matB_rows, matB_cols));
 
 	cout << endl;
 
-	vector<vector<int>> matC( multiply(matA, matB) );
-	cout << "Result matrix:\n";
-	print(matC);
+	switch (choice) {
+		case 1:
+			matC = add(matA, matB, matA_rows, matA_cols);
+			cout << "Sum:\n";
+			break;
+		case 2:
+			matC = multiply(matA, matA_rows, matA_cols, matB, matB_rows, matB_cols);
+			cout << "Product:\n";
+			break;
+		default:
+			cout << "ERROR: Invalid choice: " << choice << "\n";
+			return 0;
+	}
+
+	print(matC, matA_rows, matB_cols);
+
+	deleteMatrix(matA, matA_rows);
+	deleteMatrix(matB, matB_rows);
+	deleteMatrix(matC, matA_rows);
+
+	return 0;
 }
