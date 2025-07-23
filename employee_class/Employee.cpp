@@ -3,15 +3,33 @@
 
 #include "Employee.h"
 
-int Employee::count = 2000;
+int Employee::sCount = 2000;
+int Employee::generateId() { return ++sCount; }
 
-int Employee::generateEmpId() { return ++count; }
-
+// Constructors
 Employee::Employee() {}
-Employee::Employee(std::string _name, double _salary) : name(_name), salary(_salary) { empId = generateEmpId(); }
+Employee::Employee(const std::string _name, const double _salary) : name(_name), salary(_salary) { id = generateId(); }
 
-void Employee::print() {
-	std::cout << "Employee ID: " << empId << '\n'
+// Setters
+void Employee::setName(const std::string _name) { name = std::move(_name); }
+void Employee::setSalary(const double _salary) { salary = _salary; }
+
+// Getters
+int Employee::getId() const { return id; }
+std::string Employee::getName() const { return name; }
+double Employee::getSalary() const { return salary; }
+
+// Utilities
+void Employee::print() const {
+	std::cout << "Employee ID: " << id << '\n'
 		<< "Employee Name: " << name << '\n'
 		<< "Employee Salary: $" << std::fixed << std::setprecision(2) << salary << '\n';
+}
+
+bool operator==(const Employee& left, const Employee& right) {
+	return (
+		left.id == right.id &&
+		left.name == right.name &&
+		left.salary == right.salary
+	);
 }

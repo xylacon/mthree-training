@@ -2,20 +2,26 @@
 #include <string>
 
 class Employee {
-public:
-	Employee();
-	Employee(std::string, double);
-
-	void setEmpId(int);
-	void setName(std::string);
-	void setSalary(double);
-
-	void print();
 private:
-	static int count;
-	int empId;
+	static int sCount;
+	int id;
 	std::string name;
 	double salary;
 
-	static int generateEmpId();
+	static int generateId();
+
+public:
+	Employee();
+	Employee(std::string, const double);
+
+	void setName(std::string);
+	void setSalary(const double);
+
+	int getId() const;
+	std::string getName() const;
+	double getSalary() const;
+
+	void print() const;
+
+	friend bool operator==(const Employee&, const Employee&);
 };
