@@ -4,6 +4,7 @@
 # Allow needed files
 !.gitignore
 !Makefile
+!*.md
 
 # Allow C++ files/directories
 !*/

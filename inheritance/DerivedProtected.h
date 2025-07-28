@@ -3,6 +3,12 @@
 
 #include "Base.h"
 
+/*
+	Receives the following attributes from Base:
+	publicVar is PROTECTED (access by derived)
+	protectedVar is PROTECTED (access by derived)
+*/
+
 class DerivedProtected : protected Base {
 public:
 	DerivedProtected() : Base("DerivedProtected", "DerivedProtected", "DerivedProtected") {}
@@ -10,8 +16,7 @@ public:
 	void print() override {
 		std::cout << "DERIVED_PROTECTED\n"
 			<< "publicVar: " << publicVar << '\n'
-			<< "protectedVar: " << protectedVar << '\n'
-			<< "privateVar: inaccessible" << '\n'; 
+			<< "protectedVar: " << protectedVar << '\n'; 
 	}
 };
 

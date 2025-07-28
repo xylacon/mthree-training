@@ -6,21 +6,53 @@
 #include <iostream>
 
 int main() {
-	Base* base = new Base();
-	DerivedPublic* derivedPublic = new DerivedPublic();
-	DerivedProtected* derivedProtected = new DerivedProtected();
-	DerivedPrivate* derivedPrivate = new DerivedPrivate();
+	Base base;
+	DerivedPublic derivedPublic;
+	DerivedProtected derivedProtected;
+	DerivedPrivate derivedPrivate;
 
-	base->print();
+	// Internal
+	std::cout << "Internally accessible\n"
+		<< "---------------------\n";
+
+	base.print();
 	std::cout << '\n';
 
-	derivedPublic->print();
+	derivedPublic.print();
 	std::cout << '\n';
 
-	derivedProtected->print();
+	derivedProtected.print();
 	std::cout << '\n';
 
-	derivedPrivate->print();
+	derivedPrivate.print();
+	std::cout << '\n';
+
+	// External
+	std::cout << "Externally accessible\n"
+		<< "---------------------\n";
+
+	std::cout << "BASE\n";
+	std::cout << "publicVar: PUBLIC (access by all)\n";
+	std::cout << "protectedVar: PROTECTED (access by derived)\n";
+	std::cout << "privateVar: PRIVATE (inaccessible)\n";
+	std::cout << '\n';
+
+	std::cout << "DERIVED_PUBLIC\n";
+	std::cout << "publicVar: PUBLIC (access by all)\n";
+	std::cout << "protectedVar: PROTECTED (access by derived)\n";
+	std::cout << "privateVar: NOT PASSED DOWN\n";
+	std::cout << '\n';
+
+	std::cout << "DERIVED_PROTECTED\n";
+	std::cout << "publicVar: PROTECTED (access by derived)\n";
+	std::cout << "protectedVar: PROTECTED (access by derived)\n";
+	std::cout << "privateVar: NOT PASSED DOWN\n";
+	std::cout << '\n';
+
+	std::cout << "DERIVED_PRIVATE\n";
+	std::cout << "publicVar: PRIVATE (inaccessible)\n";
+	std::cout << "protectedVar: PRIVATE (inaccessible)\n";
+	std::cout << "privateVar: NOT PASSED DOWN\n";
 	std::cout << '\n';
 
 	return 0;

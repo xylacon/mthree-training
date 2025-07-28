@@ -4,6 +4,12 @@
 #include <string>
 #include <iostream>
 
+/*
+	publicVar is PUBLIC (access by all)
+	protectedVar is PROTECTED (access by derived)
+	privateVar is PRIVATE (no access)
+*/
+
 class Base {
 public:
 	std::string publicVar;

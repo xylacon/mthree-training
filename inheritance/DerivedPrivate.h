@@ -3,7 +3,11 @@
 
 #include "Base.h"
 
-#include <string>
+/*
+	Receives the following attributes from Base:
+	publicVar is PRIVATE (inaccessible)
+	protectedVar is PRIVATE (inaccessible)
+*/
 
 class DerivedPrivate : private Base {
 public:
@@ -12,8 +16,7 @@ public:
 	void print() override {
 		std::cout << "DERIVED_PRIVATE\n"
 			<< "publicVar: " << publicVar << '\n'
-			<< "protectedVar: " << protectedVar << '\n'
-			<< "privateVar: inaccessible" << '\n'; 
+			<< "protectedVar: " << protectedVar << '\n'; 
 	}
 };
 
