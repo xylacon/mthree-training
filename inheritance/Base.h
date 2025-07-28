@@ -25,6 +25,8 @@ public:
 			<< "privateVar: " << privateVar << '\n';
 	}
 
+	friend void printFriend(const Base*);
+
 protected:
 	std::string protectedVar;
 

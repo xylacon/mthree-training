@@ -5,6 +5,14 @@
 
 #include <iostream>
 
+void printFriend(const Base* obj) {
+	std::cout << "This is a friend of Base, with full access\n"
+		<< "to Base methods/attributes:\n"
+		<< "publicVar: " << obj->publicVar << '\n'
+		<< "protectedVar: " << obj->protectedVar << '\n'
+		<< "privateVar: " << obj->privateVar << '\n';
+}
+
 int main() {
 	Base base;
 	DerivedPublic derivedPublic;
@@ -53,6 +61,9 @@ int main() {
 	std::cout << "publicVar: PRIVATE (inaccessible)\n";
 	std::cout << "protectedVar: PRIVATE (inaccessible)\n";
 	std::cout << "privateVar: NOT PASSED DOWN\n";
+	std::cout << '\n';
+
+	printFriend(&base);
 	std::cout << '\n';
 
 	return 0;
