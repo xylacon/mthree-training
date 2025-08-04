@@ -1,5 +1,7 @@
-#include "NameException.h"
-#include "AgeException.h"
+#include "LowerLengthOfCharacters.h"
+#include "HigherLengthOfCharacters.h"
+#include "UnderAgeException.h"
+#include "OverAgeException.h"
 
 #include <iostream>
 #include <string>
@@ -12,21 +14,25 @@ int main() {
 	try {
 		std::cout << "Enter name between 10-30 characters: ";
 		std::getline(std::cin, name);
-		if (name.size() < 10) throw NameException("too short");
-		if (name.size() > 30) throw NameException("too long");
+		if (name.size() < 10) throw LowerLengthOfCharacters(name.size());
+		if (name.size() > 30) throw HigherLengthOfCharacters(name.size());
 
 		std::cout << "Enter age between 15-22: ";
 		std::cin >> age;
-		if (age < 15) throw AgeException("too low");
-		if (age > 22) throw AgeException("too high");
+		if (age < 15) throw UnderAgeException(age);
+		if (age > 22) throw OverAgeException(age);
 
-		std::cout << "\nSuccessfully nrolled student:\n"
+		std::cout << "\nSuccessfully enrolled student:\n"
 		<< "Name: " << name << '\n'
 		<< "Age: " << age << '\n';
-	} catch(const NameException& e) {
-		std::cerr << "Exception: Name is " << e.what() << '\n';
-	} catch(const AgeException& e) {
-		std::cerr << "Exception: Age is " << e.what() << '\n';
+	} catch(const LowerLengthOfCharacters& e) {
+		std::cerr << e.what() << '\n';
+	} catch(const HigherLengthOfCharacters& e) {
+		std::cerr << e.what() << '\n';
+	} catch(const UnderAgeException& e) {
+		std::cerr << e.what() << '\n';
+	} catch(const OverAgeException& e) {
+		std::cerr << e.what() << '\n';
 	}
 	std::cout << '\n';
 
