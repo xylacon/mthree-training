@@ -29,8 +29,9 @@ void runRectangle() {
 	double length, width;
 	std::cin >> length >> width;
 
-	/* Assignment 3: Remove display_area()
-	   Below does not work when display_area() is removed
+	/*
+		Assignment 3: Remove display_area()
+		Below does not work when display_area() is removed
 	*/
 	Rectangle rectangle;
 
