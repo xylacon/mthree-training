@@ -4,10 +4,10 @@
 
 #include <string>
 
-class BalanceException : public std::exception {
+class NameException : public std::exception {
 public:
-	BalanceException(const std::string& msg = "") {
-		message = "Balance Exception: " + msg;
+	NameException(const std::string& msg = "") {
+		message = "Name Exception: " + msg;
 	}
 
 	const char* what() const noexcept override {

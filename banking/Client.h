@@ -4,7 +4,7 @@
 
 class Client {
 public:
-	Client(const std::string& _name, const std::string& _address, const int _phone, const std::string& _email) : name(_name), address(_address), phone(std::to_string(_phone)), email(_email) {
+	Client(const std::string& _name, const std::string& _address, const long _phone, const std::string& _email) : name(_name), address(_address), phone(std::to_string(_phone)), email(_email) {
 		format_name();
 		format_address();
 		format_phone();

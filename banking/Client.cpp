@@ -25,7 +25,7 @@ void Client::format_address() {
 }
 
 void Client::format_phone() {
-	phone = "(" + phone.substr(0, 3) + ") " + phone.substr(3, 3) + "-" + phone.substr(6);
+	phone = "(" + phone.substr(0, 3) + ")" + phone.substr(3, 3) + "-" + phone.substr(6);
 }
 
 void Client::format_email() {
