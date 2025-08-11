@@ -1,16 +1,16 @@
 #include "Client.h"
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <cctype>
 
 void Client::display() {
 	std::cout
-		<< "Client Information:\n"
-		<< "Name: " << name << '\n'
-		<< "Address: " << address << '\n'
-		<< "Phone: " << phone << '\n'
-		<< "Email: " << email << '\n';
+		<< std::setw(30) << std::left << name << " | "
+		<< std::setw(30) << std::left << address << " | "
+		<< std::setw(13) << std::left << phone << " | "
+		<< std::setw(30) << std::left << email << '\n';
 }
 
 void Client::format_name() {

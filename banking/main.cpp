@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <cctype>
+#include <stdexcept>
 
 Account* createAccount();
 CurrentAccount* createCurrentAccount();
@@ -32,19 +33,21 @@ bool isValidEmail(const std::string&);
 bool isValidBalance(const double);
 
 int main() {
+	// Create new account
 	Account* account = createAccount();
 	if (account == nullptr) {
 		std::cout << "Account creation failed.\n";
 		return 1;
 	}
-
 	account->display();
+
+	// Deposit money
+	// Check if positive number
 
 	/*
 		TO-DO:
 		- Deposit money
 		- Withdraw money
-		- Account information
 		- Transaction history
 	*/
 
@@ -100,6 +103,9 @@ CurrentAccount* createCurrentAccount() {
 			throw BalanceException();
 
 		Business* client = new Business(name, address, phone, email);
+		if (client == nullptr)
+			throw std::runtime_error("Failed to create new client");
+			
 		CurrentAccount* account = new CurrentAccount(client, balance);
 
 		return account;
@@ -191,7 +197,6 @@ bool isValidEmail(const std::string& email) {
 
 	return at == 1 && hasDotAfterAt;
 }
-
 
 bool isValidBalance(const double balance) {
 	return balance >= 500.00 && balance <= 50000.00;

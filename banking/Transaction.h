@@ -4,12 +4,12 @@
 
 class Transaction {
 public:
-	Transaction(const std::string& _type, const double _amount) : type(_type), amount(_amount) {}
+	Transaction(const std::string&, const double, const double);
 
 	void display() const;
 	
 private:
 	std::string type, date;
-	double amount;
+	double balance, amount;
 	std::string generate_date();
 };

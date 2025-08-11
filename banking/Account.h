@@ -8,11 +8,10 @@
 
 class Account {
 public:
-	Account(Client* _client, const double _balance) : id(generate_id()), dateCreated(generate_date()), balance(_balance), client(_client) {}
+	Account(Client*, const double);
 
-	void add_transaction(Transaction* transaction) {
-		transactions.push_back(transaction);
-	}
+	virtual bool deposit(const double) = 0;
+	virtual bool withdraw(const double) = 0;
 
 	void display() const;
 	void display_transactions() const;
@@ -24,8 +23,13 @@ protected:
 	Client* client;
 	std::vector<Transaction*> transactions;
 
+	void make_deposit(const double);
+	void make_withdraw(const double);
+
 private:
 	static int counter;
+
+	void add_transaction(Transaction*);
 
 	int generate_id();
 	std::string generate_date();
