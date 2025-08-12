@@ -1,4 +1,4 @@
-#include "Transaction.h"
+#include "models/Transaction.h"
 
 #include <string>
 
@@ -8,3 +8,4 @@ int Transaction::get_patron_id() const { return patronId; }
 int Transaction::get_book_id() const { return bookId; }
 const std::string& Transaction::get_loan_date() const { return loanDate; }
 const std::string& Transaction::get_due_date() const { return dueDate; }
+bool Transaction::get_returned() const { return returned; }

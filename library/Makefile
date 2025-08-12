@@ -5,10 +5,14 @@
 # Run a file - In the terminal, run: ./<target>
 
 CXX = clang++
-CXXFLAGS = -std=c++11 -Wall -MMD -MP
-SOURCES := $(wildcard *.cpp)
-OBJECTS := $(SOURCES:.cpp=.o)
+CXXFLAGS = -std=c++11 -Wall -MMD -MP -Iinclude
+
+SOURCES := main.cpp $(shell find src -name '*.cpp')
+
+OBJECTS := build/main.o $(patsubst src/%.cpp, build/%.o, $(filter-out main.cpp, $(SOURCES)))
+
 DEPS := $(OBJECTS:.o=.d)
+
 TARGET := main
 
 all: $(TARGET)
@@ -18,8 +22,14 @@ $(TARGET): $(OBJECTS)
 
 -include $(DEPS)
 
-%.o: %.cpp
+build/%.o: src/%.cpp | build_dirs
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+build/main.o: main.cpp | build_dirs
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+build_dirs:
+	mkdir -p build/models build/service build/dao
+
 clean:
-	rm -f $(TARGET) $(OBJECTS) $(DEPS)
+	rm -rf $(TARGET) build
