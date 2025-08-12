@@ -11,6 +11,18 @@ int Account::counter = 100000;
 
 Account::Account(Client* _client, const double _balance) : id(generate_id()), dateCreated(generate_date()), balance(_balance), client(_client) {}
 
+int Account::get_id() const {
+	return id;
+}
+
+double Account::get_balance() const {
+	return balance;
+}
+
+Client* Account::get_client() const {
+	return client;
+}
+
 void Account::display() const {
 	std::cout
 		<< std::setw(6) << id << " | "
@@ -25,14 +37,6 @@ void Account::display_transactions() const {
 		std::cout << "No transaction history.\n";
 		return;
 	}
-
-	std::cout
-		<< "TRANSACTIONS\n"
-		<< std::setw(19) << std::left << "Date" << " | "
-		<< std::setw(10) << std::left << "Type" << " | "
-		<< std::fixed << std::setprecision(2)
-		<< std::setw(8) << std::left << "Amount" << " | "
-		<< std::setw(8) << std::left << "Balance" << '\n';
 
 	const size_t N = transactions.size();
 	for (size_t i = 0; i < N; ++i)

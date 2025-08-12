@@ -13,6 +13,10 @@ public:
 	virtual bool deposit(const double) = 0;
 	virtual bool withdraw(const double) = 0;
 
+	int get_id() const;
+	double get_balance() const;
+	Client* get_client() const;
+
 	void display() const;
 	void display_transactions() const;
 

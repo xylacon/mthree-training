@@ -10,6 +10,8 @@ public:
 		format_phone();
 		format_email();
 	}
+
+	std::string get_name() const;
 	
 	void display();
 

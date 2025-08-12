@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-Transaction::Transaction(const std::string& _type = "null", const double _balance = 0.0, const double _amount = 0.0) : type(_type), balance(_balance), amount(_amount) {}
+Transaction::Transaction(const std::string& _type, const double _balance, const double _amount) : type(_type), date(generate_date()), balance(_balance), amount(_amount) {}
 
 void Transaction::display() const {
 	std::cout

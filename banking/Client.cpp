@@ -5,10 +5,14 @@
 #include <string>
 #include <cctype>
 
+std::string Client::get_name() const {
+	return name;
+}
+
 void Client::display() {
 	std::cout
 		<< std::setw(30) << std::left << name << " | "
-		<< std::setw(30) << std::left << address << " | "
+		<< std::setw(40) << std::left << address << " | "
 		<< std::setw(13) << std::left << phone << " | "
 		<< std::setw(30) << std::left << email << '\n';
 }
