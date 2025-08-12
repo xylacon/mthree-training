@@ -5,7 +5,7 @@
 # Run a file - In the terminal, run: ./<target>
 
 CXX = clang++
-CXXFLAGS = -std=c++11 -Wall -MMD -MP -Iinclude
+CXXFLAGS = -std=c++14 -Wall -MMD -MP -Iinclude
 
 SOURCES := main.cpp $(shell find src -name '*.cpp')
 

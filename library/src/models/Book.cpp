@@ -4,7 +4,7 @@
 
 #include "utility.h"
 
-int Book::counter = 100000;
+int Book::counter = 0;
 
 Book::Book(std::string _title, std::string _author, std::string _genre, const int _year) : id(utils::generate_id(counter)), title(_title), author(_author), genre(_genre), year(_year) {}
 

@@ -5,6 +5,7 @@
 class Patron {
 public:
 	Patron(std::string);
+	Patron(const int, std::string);
 
 	void set_name(std::string);
 
