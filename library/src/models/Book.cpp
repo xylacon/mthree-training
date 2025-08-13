@@ -7,6 +7,10 @@
 int Book::counter = 0;
 
 Book::Book(std::string _title, std::string _author, std::string _genre, const int _year) : id(utils::generate_id(counter)), title(_title), author(_author), genre(_genre), year(_year) {}
+Book::Book(const int _id, std::string _title, std::string _author, std::string _genre, const int _year) : id(_id), title(_title), author(_author), genre(_genre), year(_year) {
+	if (_id > counter)
+		counter = _id;
+}
 
 void Book::set_title(std::string _title) { title = std::move(_title); }
 void Book::set_author(std::string _author) { author = std::move(_author); }

@@ -30,7 +30,7 @@ std::vector<std::shared_ptr<Patron>> PatronDAO::load_all(const std::string& file
 		const int id = std::stoi(idStr);
 		std::getline(ss, name);
 
-		auto patron = std::make_unique<Patron>(id, name);
+		auto patron = std::make_shared<Patron>(id, name);
 		patrons.push_back(std::move(patron));
 	}
 
