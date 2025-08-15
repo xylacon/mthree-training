@@ -9,20 +9,30 @@
 
 MediaService::MediaService(std::string& filename) { dao = MediaDAO::get_instance(filename); }
 
+bool MediaService::exists(const int id) const {
+	return dao->exists(id);
+}
+
 void MediaService::add(Media& item) {
 	dao->insert(item.clone());
 }
-void MediaService::update(Media& item) {
-	if (dao->exists(item.get_id()))
+bool MediaService::update(Media& item) {
+	if (dao->exists(item.get_id())) {
 		dao->update(item.clone());
-	else
-		std::cout << "Update failed. Media not found.\n";
+		return true;
+	}
+		
+	return false;
 }
 void MediaService::remove(const int id) {
 	if (dao->exists(id))
 		dao->remove(id);
 	else
 		std::cout << "Deletion failed. Media not found.\n";
+}
+
+int MediaService::get_size() const {
+	return dao->get_size();
 }
 
 std::unique_ptr<Media> MediaService::find_by_id(const int id) const {

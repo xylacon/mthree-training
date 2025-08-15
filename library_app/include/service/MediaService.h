@@ -12,8 +12,12 @@ public:
     MediaService(std::string&);
 
     void add(Media&);
-    void update(Media&);
+    bool update(Media&);
     void remove(const int);
+
+    bool exists(const int id) const;
+
+    int get_size() const;
 
     std::unique_ptr<Media> find_by_id(const int) const;
     std::vector<std::unique_ptr<Media>> find_by_title(const std::string&) const;

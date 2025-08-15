@@ -13,10 +13,10 @@ namespace utils {
 
 	std::string generate_date() {
 		std::time_t t = std::time({});
-		std::ostringstream ss;
-		ss << std::put_time(std::localtime(&t), "%m/%d/%Y %H:%M:%S");
+		std::ostringstream oss;
+		oss << std::put_time(std::localtime(&t), "%m/%d/%Y");
 
-		return ss.str();
+		return oss.str();
 	}
 
 	bool file_exists(const std::string& filename) {

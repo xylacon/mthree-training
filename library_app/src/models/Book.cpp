@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iomanip>
 
-Book::Book(std::string _type, std::string _title, std::string _author, std::string _purchaseDate, std::string _coverType) : Media(_type, _title, _author, _purchaseDate), coverType(_coverType) {}
+Book::Book(std::string _type, std::string _title, std::string _author, std::string _coverType) : Media(_type, _title, _author), coverType(_coverType) {}
 Book::Book(const int _id, std::string _type, std::string _title, std::string _author, std::string _purchaseDate, std::stringstream& ss) : Media(_id, _type, _title, _author, _purchaseDate) {
 	std::getline(ss, coverType);
 }

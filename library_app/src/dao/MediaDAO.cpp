@@ -16,6 +16,8 @@ std::shared_ptr<MediaDAO> MediaDAO::get_instance(std::string& _filename) {
 	return instance;
 }
 
+int MediaDAO::get_size() const { return items.size(); }
+
 void MediaDAO::insert(std::unique_ptr<Media> item) {
 	items.push_back(std::move(item));
 

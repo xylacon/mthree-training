@@ -3,9 +3,11 @@
 #include "models/Patron.h"
 #include "models/Admin.h"
 #include "models/Book.h"
+#include "models/Transaction.h"
 
 #include "service/UserService.h"
 #include "service/MediaService.h"
+#include "service/TransactionService.h"
 
 #include <iostream>
 #include <memory>
@@ -25,7 +27,15 @@ int main() {
 	// service.add(b1);
 	// service.add(b2);
 
-	std::shared_ptr<Menu> menu = Menu::get_instance("data/users.csv", "data/items.csv");
+	// std::string str = "data/transactions.csv";
+	// TransactionService service(str);
+	// Transaction t1(100, 200, "3/1/1998", "3/8/1998", false);
+	// Transaction t2(101, 201, "8/15/2025", "8/22/2025", true);
+
+	// service.add(t1);
+	// service.add(t2);
+
+	std::shared_ptr<Menu> menu = Menu::get_instance("data/users.csv", "data/items.csv", "data/transactions.csv");
 	menu->run();
 
 	/*

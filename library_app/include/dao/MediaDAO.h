@@ -15,6 +15,8 @@ public:
 	MediaDAO(const MediaDAO&) = delete;
 	MediaDAO& operator=(const MediaDAO&) = delete;
 
+	int get_size() const;
+
 	void insert(std::unique_ptr<Media>);
 	void update(std::unique_ptr<Media>);
 	void remove(const int);

@@ -5,13 +5,17 @@
 
 class Media {
 public:
-	Media(std::string, std::string, std::string, std::string);
+	Media(std::string, std::string, std::string);
 	Media(const int, std::string, std::string, std::string, std::string);
 
 	int get_id() const;
 	std::string get_title() const;
 	std::string get_author() const;
 	std::string get_type() const;
+
+	void set_type(std::string);
+	void set_title(std::string);
+	void set_author(std::string);
 
 	virtual std::string print_csv() const = 0;
 	virtual std::string print_cout() const = 0;
