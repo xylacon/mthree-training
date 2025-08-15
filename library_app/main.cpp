@@ -19,14 +19,13 @@ int main() {
 	// service.add(a);
 
 	// MediaService service("data/items.csv");
-	// Book b1("book", "Title1", "Author1", "03/01/1998", "hard");
-	// Book b2("book", "Title2", "Author2", "08/14/2025", "soft");
+	// Book b1("book", "Title1", "Author1", "03/01/1998", "hard cover");
+	// Book b2("book", "Title2", "Author2", "08/14/2025", "soft cover");
 
 	// service.add(b1);
 	// service.add(b2);
 
-	std::shared_ptr<Menu> menu = Menu::get_instance("data/users.csv");
-
+	std::shared_ptr<Menu> menu = Menu::get_instance("data/users.csv", "data/items.csv");
 	menu->run();
 
 	/*

@@ -9,8 +9,10 @@ public:
 	User(const int, std::string, std::string, std::string, std::string);
 
 	int get_id() const;
+	std::string get_type() const;
 	std::string get_username() const;
 	std::string get_password() const;
+	std::string get_name() const;
 
 	virtual std::string print_csv() const = 0;
 

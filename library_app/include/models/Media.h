@@ -14,6 +14,7 @@ public:
 	std::string get_type() const;
 
 	virtual std::string print_csv() const = 0;
+	virtual std::string print_cout() const = 0;
 
 	virtual std::unique_ptr<Media> clone() const = 0;
 
