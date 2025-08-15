@@ -9,7 +9,7 @@
 // Singleton
 class MediaDAO {
 public:
-	static std::shared_ptr<MediaDAO> get_instance(const std::string&, const std::string&);
+	static std::shared_ptr<MediaDAO> get_instance(std::string&);
 
 	// Prevent copy/assignment
 	MediaDAO(const MediaDAO&) = delete;
@@ -20,16 +20,18 @@ public:
 	void remove(const int);
 
 	std::unique_ptr<Media> find_by_id(const int) const;
+	std::vector<std::unique_ptr<Media>> find_by_title(const std::string&) const;
+	std::vector<std::unique_ptr<Media>> find_by_author(const std::string&) const;
+	std::vector<std::unique_ptr<Media>> find_by_type(const std::string&) const;
 	std::vector<std::unique_ptr<Media>> find_all() const;
 
 	bool exists(const int) const;
 
 private:
-	std::string inFile; // Read data
-	std::string outFile; // Write data
+	std::string filename; // Data source
 	std::vector<std::unique_ptr<Media>> items;
 
-	MediaDAO(const std::string&, const std::string&);
+	MediaDAO(std::string&);
 
 	void load_all();
 	void save_all();

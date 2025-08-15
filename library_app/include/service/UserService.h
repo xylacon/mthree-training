@@ -9,8 +9,9 @@
 
 class UserService {
 public:
-    UserService(const std::string&);
-	UserService(const std::string&, const std::string&);
+    UserService(std::string&);
+
+    std::unique_ptr<User> log_in(const std::string&, const std::string&) const;
 
     void add(User&);
     void update(User&);

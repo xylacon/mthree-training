@@ -12,8 +12,8 @@
 #include <memory>
 
 // PUBLIC
-std::shared_ptr<UserDAO> UserDAO::get_instance(const std::string& _inFile, const std::string& _outFile) {
-	static std::shared_ptr<UserDAO> instance(new UserDAO(_inFile, _outFile));
+std::shared_ptr<UserDAO> UserDAO::get_instance(std::string& _filename) {
+	static std::shared_ptr<UserDAO> instance(new UserDAO(_filename));
 	return instance;
 }
 
@@ -21,9 +21,9 @@ void UserDAO::insert(std::unique_ptr<User> user) {
 	users.push_back(std::move(user));
 
 	// Update data file
-	std::ofstream file(outFile, std::ios::app);
+	std::ofstream file(filename, std::ios::app);
 	if (!file) {
-		std::cerr << "Failed to open " << outFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 
@@ -57,6 +57,12 @@ std::unique_ptr<User> UserDAO::find_by_id(const int id) const {
             return user->clone();
     return nullptr;
 }
+std::unique_ptr<User> UserDAO::find_by_username_password(const std::string& username, const std::string& password) {
+	for (const auto& user : users)
+        if (user->get_username() == username && user->get_password() == password)
+            return user->clone();
+    return nullptr;
+}
 std::vector<std::unique_ptr<User>> UserDAO::find_all() const {
 	std::vector<std::unique_ptr<User>> copy;
 	copy.reserve(users.size());
@@ -75,19 +81,17 @@ bool UserDAO::exists(const int id) const {
 }
 
 // PRIVATE
-UserDAO::UserDAO(const std::string& _inFile, const std::string& _outFile) : inFile(_inFile), outFile(_outFile) {
-	load_all();
-}
+UserDAO::UserDAO(std::string& _filename) : filename(_filename) { load_all(); }
 
 void UserDAO::load_all() {
-	if (!utils::file_exists(inFile)) {
-		std::ofstream file(inFile);
+	if (!utils::file_exists(filename)) {
+		std::ofstream file(filename);
 		file.close();
 	}
 
-	std::ifstream file(inFile);
+	std::ifstream file(filename);
 	if (!file) {
-		std::cerr << "Failed to open " << inFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 
@@ -117,9 +121,9 @@ void UserDAO::load_all() {
 }
 
 void UserDAO::save_all() {
-	std::ofstream file(outFile);
+	std::ofstream file(filename);
 	if (!file) {
-		std::cerr << "Failed to open " << outFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 

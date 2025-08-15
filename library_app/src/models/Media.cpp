@@ -13,3 +13,6 @@ Media::Media(const int _id, std::string _type, std::string _title, std::string _
 }
 
 int Media::get_id() const { return id; }
+std::string Media::get_title() const { return title; }
+std::string Media::get_author() const { return author; }
+std::string Media::get_type() const { return type; }

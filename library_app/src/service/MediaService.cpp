@@ -7,12 +7,7 @@
 #include <iostream>
 #include <memory>
 
-MediaService::MediaService(const std::string& inFile) {
-	dao = MediaDAO::get_instance(inFile, inFile);
-}
-MediaService::MediaService(const std::string& inFile, const std::string& outFile) {
-	dao = MediaDAO::get_instance(inFile, outFile);
-}
+MediaService::MediaService(std::string& filename) { dao = MediaDAO::get_instance(filename); }
 
 void MediaService::add(Media& item) {
 	dao->insert(item.clone());
@@ -32,6 +27,15 @@ void MediaService::remove(const int id) {
 
 std::unique_ptr<Media> MediaService::find_by_id(const int id) const {
 	return dao->find_by_id(id);
+}
+std::vector<std::unique_ptr<Media>> MediaService::find_by_title(const std::string& title) const {
+	return dao->find_by_title(title);
+}
+std::vector<std::unique_ptr<Media>> MediaService::find_by_author(const std::string& author) const {
+	return dao->find_by_author(author);
+}
+std::vector<std::unique_ptr<Media>> MediaService::find_by_type(const std::string& type) const {
+	return dao->find_by_type(type);
 }
 std::vector<std::unique_ptr<Media>> MediaService::find_all() const {
 	return dao->find_all();

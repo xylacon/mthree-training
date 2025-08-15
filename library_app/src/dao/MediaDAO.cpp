@@ -11,8 +11,8 @@
 #include <memory>
 
 // PUBLIC
-std::shared_ptr<MediaDAO> MediaDAO::get_instance(const std::string& _inFile, const std::string& _outFile) {
-	static std::shared_ptr<MediaDAO> instance(new MediaDAO(_inFile, _outFile));
+std::shared_ptr<MediaDAO> MediaDAO::get_instance(std::string& _filename) {
+	static std::shared_ptr<MediaDAO> instance(new MediaDAO(_filename));
 	return instance;
 }
 
@@ -20,9 +20,9 @@ void MediaDAO::insert(std::unique_ptr<Media> item) {
 	items.push_back(std::move(item));
 
 	// Update data file
-	std::ofstream file(outFile, std::ios::app);
+	std::ofstream file(filename, std::ios::app);
 	if (!file) {
-		std::cerr << "Failed to open " << outFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 
@@ -56,6 +56,33 @@ std::unique_ptr<Media> MediaDAO::find_by_id(const int id) const {
             return item->clone();
     return nullptr;
 }
+std::vector<std::unique_ptr<Media>> MediaDAO::find_by_title(const std::string& title) const {
+	std::vector<std::unique_ptr<Media>> copy;
+
+	for (const auto& item : items)
+		if (item->get_title() == title)
+			copy.push_back(item->clone());
+	
+	return copy;
+}
+std::vector<std::unique_ptr<Media>> MediaDAO::find_by_author(const std::string& author) const {
+	std::vector<std::unique_ptr<Media>> copy;
+
+	for (const auto& item : items)
+		if (item->get_author() == author)
+			copy.push_back(item->clone());
+	
+	return copy;
+}
+std::vector<std::unique_ptr<Media>> MediaDAO::find_by_type(const std::string& type) const {
+	std::vector<std::unique_ptr<Media>> copy;
+
+	for (const auto& item : items)
+		if (item->get_type() == type)
+			copy.push_back(item->clone());
+	
+	return copy;
+}
 std::vector<std::unique_ptr<Media>> MediaDAO::find_all() const {
 	std::vector<std::unique_ptr<Media>> copy;
 	copy.reserve(items.size());
@@ -74,19 +101,17 @@ bool MediaDAO::exists(const int id) const {
 }
 
 // PRIVATE
-MediaDAO::MediaDAO(const std::string& _inFile, const std::string& _outFile) : inFile(_inFile), outFile(_outFile) {
-	load_all();
-}
+MediaDAO::MediaDAO(std::string& _filename) : filename(_filename) { load_all(); }
 
 void MediaDAO::load_all() {
-	if (!utils::file_exists(inFile)) {
-		std::ofstream file(inFile);
+	if (!utils::file_exists(filename)) {
+		std::ofstream file(filename);
 		file.close();
 	}
 
-	std::ifstream file(inFile);
+	std::ifstream file(filename);
 	if (!file) {
-		std::cerr << "Failed to open " << inFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 
@@ -116,9 +141,9 @@ void MediaDAO::load_all() {
 }
 
 void MediaDAO::save_all() {
-	std::ofstream file(outFile);
+	std::ofstream file(filename);
 	if (!file) {
-		std::cerr << "Failed to open " << outFile << '\n';
+		std::cerr << "Failed to open " << filename << '\n';
 		return;
 	}
 

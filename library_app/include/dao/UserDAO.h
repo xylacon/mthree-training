@@ -9,7 +9,7 @@
 // Singleton
 class UserDAO {
 public:
-	static std::shared_ptr<UserDAO> get_instance(const std::string&, const std::string&);
+	static std::shared_ptr<UserDAO> get_instance(std::string&);
 
 	// Prevent copy/assignment
 	UserDAO(const UserDAO&) = delete;
@@ -20,16 +20,16 @@ public:
 	void remove(const int);
 
 	std::unique_ptr<User> find_by_id(const int) const;
+	std::unique_ptr<User> find_by_username_password(const std::string&, const std::string&);
 	std::vector<std::unique_ptr<User>> find_all() const;
 
 	bool exists(const int) const;
 
 private:
-	std::string inFile; // Read data
-	std::string outFile; // Write data
+	std::string filename; // Data source
 	std::vector<std::unique_ptr<User>> users;
 
-	UserDAO(const std::string&, const std::string&);
+	UserDAO(std::string&);
 
 	void load_all();
 	void save_all();

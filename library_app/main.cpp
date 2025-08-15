@@ -1,3 +1,5 @@
+#include "Menu.h"
+
 #include "models/Patron.h"
 #include "models/Admin.h"
 #include "models/Book.h"
@@ -23,6 +25,10 @@ int main() {
 	// service.add(b1);
 	// service.add(b2);
 
+	std::shared_ptr<Menu> menu = Menu::get_instance("data/users.csv");
+
+	menu->run();
+
 	/*
 		Prompt to log in
 		If patron
@@ -31,7 +37,7 @@ int main() {
 				To rent, enter item number
 				To go back, enter 'b'
 			2. Search
-				1. By name
+				1. By title
 					<numbered list>
 					To rent, enter item number
 					To go back, enter 'b'

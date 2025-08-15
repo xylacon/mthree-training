@@ -7,11 +7,10 @@
 #include <iostream>
 #include <memory>
 
-UserService::UserService(const std::string& inFile) {
-	dao = UserDAO::get_instance(inFile, inFile);
-}
-UserService::UserService(const std::string& inFile, const std::string& outFile) {
-	dao = UserDAO::get_instance(inFile, outFile);
+UserService::UserService(std::string& filename) { dao = UserDAO::get_instance(filename); }
+
+std::unique_ptr<User> UserService::log_in(const std::string& username, const std::string& password) const {
+	return dao->find_by_username_password(username, password);
 }
 
 void UserService::add(User& user) {

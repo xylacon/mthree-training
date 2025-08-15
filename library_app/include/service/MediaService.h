@@ -9,14 +9,16 @@
 
 class MediaService {
 public:
-    MediaService(const std::string&);
-	MediaService(const std::string&, const std::string&);
+    MediaService(std::string&);
 
     void add(Media&);
     void update(Media&);
     void remove(const int);
 
     std::unique_ptr<Media> find_by_id(const int) const;
+    std::vector<std::unique_ptr<Media>> find_by_title(const std::string&) const;
+    std::vector<std::unique_ptr<Media>> find_by_author(const std::string&) const;
+    std::vector<std::unique_ptr<Media>> find_by_type(const std::string&) const;
     std::vector<std::unique_ptr<Media>> find_all() const;
 
 private:

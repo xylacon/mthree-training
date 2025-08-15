@@ -9,6 +9,9 @@ public:
 	Media(const int, std::string, std::string, std::string, std::string);
 
 	int get_id() const;
+	std::string get_title() const;
+	std::string get_author() const;
+	std::string get_type() const;
 
 	virtual std::string print_csv() const = 0;
 

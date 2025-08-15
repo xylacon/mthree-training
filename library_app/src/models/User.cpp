@@ -13,3 +13,5 @@ User::User(const int _id, std::string _type, std::string _username, std::string 
 }
 
 int User::get_id() const { return id; }
+std::string User::get_username() const { return username; }
+std::string User::get_password() const { return password; }
