@@ -2,14 +2,20 @@
 
 #include <iostream>
 #include <iomanip>
+#include <limits>
 
 int UI::get_choice(const int lowerBound, const int upperBound) const {
 	int choice;
 	while (true) {
 		std::cout << "Choose an option: ";
-		std::cin >> choice;
-		if (choice >= lowerBound && choice <= upperBound) break;
-		std::cout << "Invalid choice. Please try again.\n";
+		if (std::cin >> choice) {
+			if (choice >= lowerBound && choice <= upperBound) break;
+			std::cout << "Invalid choice. Please try again.\n";
+		} else {
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "Invalid input. Please enter a number.\n";
+		}
 	}
 	std::cout << '\n';
 	std::cin.ignore();

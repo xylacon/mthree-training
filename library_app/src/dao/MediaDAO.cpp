@@ -156,6 +156,8 @@ void MediaDAO::load_all() {
 				items.push_back(std::make_unique<Audio>(id, type, title, author, purchaseDate, ss));
 			else if (type == "video")
 				items.push_back(std::make_unique<Video>(id, type, title, author, purchaseDate, ss));
+			else
+				throw InvalidResourceException("Failed to read media of type " + type);
 		} catch (const InvalidResourceException& ex) {
 			std::cerr << ex.what() << '\n';
 		}

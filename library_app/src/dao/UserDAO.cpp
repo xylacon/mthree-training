@@ -133,6 +133,8 @@ void UserDAO::load_all() {
 				users.push_back(std::make_unique<Patron>(id, type, username, password, name, ss));
 			else if (type == "admin")
 				users.push_back(std::make_unique<Admin>(id, type, username, password, name, ss));
+			else
+				throw InvalidResourceException("Failed to read user of type " + type);
 		} catch (const InvalidResourceException& ex) {
 			std::cerr << ex.what() << '\n';
 		}

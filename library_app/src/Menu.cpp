@@ -112,7 +112,6 @@ bool Menu::patron_menu() {
 }
 bool Menu::admin_menu() {
 	std::cout
-		<< "Hello " << user->get_name() << "\n\n"
 		<< "1. See all media\n"
 		<< "2. Search\n"
 		<< "3. Add media\n"
@@ -147,6 +146,8 @@ bool Menu::admin_menu() {
 				std::cout << "Item updated successfully.\n";
 			} catch (const ResourceNotFoundException& ex) {
 				std::cerr << ex.what() << "\nUpdate failed\n";
+			} catch (const ResourceUnavailableException& ex) {
+				std::cerr << ex.what() << "\nUpdate failed\n";
 			}
 			break;
 		case 5:
@@ -154,6 +155,8 @@ bool Menu::admin_menu() {
 				delete_media();
 				std::cout << "Item removed successfully.\n";
 			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nDelete failed\n";
+			} catch (const ResourceUnavailableException& ex) {
 				std::cerr << ex.what() << "\nDelete failed\n";
 			}
 			break;
@@ -189,6 +192,8 @@ void Menu::rent_menu() {
 				std::cerr << ex.what() << "\nRent failed\n";
 			} catch (const DuplicateResourceException& ex) {
 				std::cerr << ex.what() << "\nYou already have this item on loan.\n";
+			} catch (const ResourceUnavailableException& ex) {
+				std::cerr << ex.what() << '\n';
 			}
 			break;
 		case 2:
@@ -362,10 +367,8 @@ void Menu::rent_item() {
 	if (media == nullptr) 
 		throw ResourceNotFoundException("Media ID does not exist");
 
-	if (media->get_type() == "book" && transactionService->exists_media(mediaId)) {
-		std::cout << "Book is already loaned out.\n";
-		return;
-	}
+	if (media->get_type() == "book" && transactionService->exists_media(mediaId))
+		throw ResourceUnavailableException("Book is already loaned out");
 
 	Transaction transaction(user->get_id(), mediaId);
 	transactionService->add(transaction);
@@ -462,6 +465,10 @@ void Menu::update_media() {
 	if (item == nullptr)
 		throw ResourceNotFoundException("Media ID does not exist");
 
+	if (transactionService->exists_media(mediaId))
+		throw ResourceUnavailableException("Item is on loan");
+
+	std::cin.ignore();
 	std::cout << "Enter new title: ";
 	std::string title;
 	std::getline(std::cin, title);
