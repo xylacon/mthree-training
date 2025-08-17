@@ -29,7 +29,7 @@ build/main.o: main.cpp | build_dirs
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build_dirs:
-	mkdir -p build/models build/service build/dao
+	mkdir -p build/models build/service build/dao build/exceptions
 
 clean:
 	rm -rf $(TARGET) build

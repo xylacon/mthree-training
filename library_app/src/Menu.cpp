@@ -2,8 +2,20 @@
 
 #include "models/Media.h"
 #include "models/Book.h"
+#include "models/EBook.h"
+#include "models/Audio.h"
+#include "models/Video.h"
 
 #include "service/UserService.h"
+#include "service/MediaService.h"
+#include "service/TransactionService.h"
+
+#include "exceptions/LibraryException.h"
+#include "exceptions/AuthenticationException.h"
+#include "exceptions/InvalidMediaException.h"
+#include "exceptions/ResourceNotFoundException.h"
+#include "exceptions/DuplicateResourceException.h"
+#include "exceptions/BadOperationException.h"
 
 #include <iostream>
 #include <iomanip>
@@ -12,9 +24,10 @@
 #include <vector>
 
 // Public
-std::shared_ptr<Menu> Menu::get_instance(std::string userData, std::string mediaData, std::string transactionData) {
-	static std::shared_ptr<Menu> instance(new Menu(userData, mediaData, transactionData));
-	return instance;
+Menu::Menu(std::string userData, std::string mediaData, std::string transactionData) {
+	userService = std::make_unique<UserService>(userData);
+	mediaService = std::make_unique<MediaService>(mediaData);
+	transactionService = std::make_unique<TransactionService>(transactionData);
 }
 
 void Menu::run() { 
@@ -22,12 +35,6 @@ void Menu::run() {
 }
 
 // Private
-Menu::Menu(std::string& userData, std::string& mediaData, std::string& transactionData) {
-	userService = std::make_unique<UserService>(userData);
-	mediaService = std::make_unique<MediaService>(mediaData);
-	transactionService = std::make_unique<TransactionService>(transactionData);
-}
-
 bool Menu::main_menu() {
 	std::cout
 		<< "Welcome to Denton Library\n\n"
@@ -38,10 +45,14 @@ bool Menu::main_menu() {
 	const int choice = get_choice(1, 2);
 	switch (choice) {
 		case 1:
-			if (log_in())
-				user_menu();
-			else
-				std::cout << "Incorrect username/password.\n";
+			try {
+				log_in();
+			} catch (const AuthenticationException& ex) {
+				std::cerr << ex.what() << '\n';
+				return false;
+			}
+
+			user_menu();
 			break;
 		case 2:
 			std::cout << "Quitting main menu...\n";
@@ -58,8 +69,6 @@ void Menu::user_menu() {
 		while (patron_menu());
 	else if (user->get_type() == "admin")
 		while (admin_menu());
-	else
-		std::cout << "Error getting menu for invalid user type.\n";
 }
 bool Menu::patron_menu() {
 	std::cout
@@ -113,13 +122,32 @@ bool Menu::admin_menu() {
 			search_menu();
 			break;
 		case 3:
-			add_media();
+			try {
+				add_media();
+				std::cout << "Item added.\n";
+			} catch (const InvalidMediaException& ex) {
+				std::cerr << ex.what() << "\nAdd failed\n";
+			} catch (const DuplicateResourceException& ex) {
+				std::cerr << ex.what() << "\nAdd failed\n";
+			}
 			break;
 		case 4:
-			update_media();
+			try {
+				update_media();
+				std::cout << "Item updated successfully.\n";
+			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nUpdate failed\n";
+			}
 			break;
 		case 5:
-			delete_media();
+			try {
+				delete_media();
+				std::cout << "Item removed successfully.\n";
+			} catch (const BadOperationException& ex) {
+				std::cerr << ex.what() << "\nDelete failed\n";
+			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nDelete failed\n";
+			}
 			break;
 		case 6:
 			get_all_loans();
@@ -340,47 +368,55 @@ void Menu::add_media() {
 	std::string author;
 	std::getline(std::cin, author);
 
+	std::unique_ptr<Media> item;
 	while (true) {
 		std::cout << "Enter media type (book, ebook, audio, video): ";
 		std::string type;
 		std::getline(std::cin, type);
 		if (type == "book") {
-			add_book(type, title, author);
+			item = add_book(type, title, author);
 		} else if (type == "ebook") {
-			add_ebook(type, title, author);
+			item = add_ebook(type, title, author);
 		} else if (type == "audio") {
-			add_audio(type, title, author);
+			item = add_audio(type, title, author);
 		} else if (type == "video") {
-			add_video(type, title, author);
+			item = add_video(type, title, author);
 		} else {
 			std::cout << "Invalid type.\n";
 			continue;
 		}
-
 		break;
 	}
+
+	mediaService->add(*item);
 }
-void Menu::add_book(std::string& type, std::string& title, std::string& author) {
+std::unique_ptr<Media> Menu::add_book(std::string& type, std::string& title, std::string& author) {
 	std::cout << "Enter cover type (ex: hard): ";
 	std::string coverType;
 	std::getline(std::cin, coverType);
 
-	Book book(type, title, author, coverType);
+	return std::make_unique<Book>(type, title, author, coverType);
 }
-void Menu::add_ebook(std::string& type, std::string& title, std::string& author) {
+std::unique_ptr<Media> Menu::add_ebook(std::string& type, std::string& title, std::string& author) {
 	std::cout << "Enter download size (ex: 50 mb): ";
 	std::string downloadSize;
 	std::getline(std::cin, downloadSize);
+
+	return std::make_unique<EBook>(type, title, author, downloadSize);
 }
-void Menu::add_audio(std::string& type, std::string& title, std::string& author) {
+std::unique_ptr<Media> Menu::add_audio(std::string& type, std::string& title, std::string& author) {
 	std::cout << "Enter audio length (ex: 4 hr): ";
 	std::string audioLength;
 	std::getline(std::cin, audioLength);
+
+	return std::make_unique<Audio>(type, title, author, audioLength);
 }
-void Menu::add_video(std::string& type, std::string& title, std::string& author) {
+std::unique_ptr<Media> Menu::add_video(std::string& type, std::string& title, std::string& author) {
 	std::cout << "Enter video length (ex: 2 hr): ";
 	std::string videoLength;
 	std::getline(std::cin, videoLength);
+
+	return std::make_unique<Video>(type, title, author, videoLength);
 }
 void Menu::update_media() {
 	std::cout << "Enter the item's ID: ";
@@ -389,10 +425,8 @@ void Menu::update_media() {
 
 	std::unique_ptr<Media> item = mediaService->find_by_id(mediaId);
 
-	if (item == nullptr) {
-		std::cout << "Item not found.\n";
-		return;
-	}
+	if (item == nullptr)
+		throw ResourceNotFoundException("Media ID does not exist");
 
 	std::cout << "Enter new title: ";
 	std::string title;
@@ -405,10 +439,7 @@ void Menu::update_media() {
 	item->set_title(title);
 	item->set_author(author);
 
-	if (mediaService->update(*item))
-		std::cout << "Item updated successfully.\n";
-	else 
-		std::cout << "Error updating item.\n";
+	mediaService->update(*item);
 }
 void Menu::delete_media() {
 	std::cout << "Delete media...\n";
@@ -416,18 +447,10 @@ void Menu::delete_media() {
 	int mediaId;
 	std::cin >> mediaId;
 
-	if (mediaService->exists(mediaId)) {
-		std::cout << "Item does not exist.\n";
-		return;
-	}
-
-	if (!transactionService->find_by_media_id(mediaId).empty()) {
-		std::cout << "Cannot delete, item is on loan.\n";
-		return;
-	}
+	if (!transactionService->find_by_media_id(mediaId).empty())
+		throw BadOperationException("Item is on loan");
 
 	mediaService->remove(mediaId);
-	std::cout << "Item removed successfully.\n";
 }
 
 int Menu::get_choice(const int lowerBound, const int upperBound) const {
@@ -445,18 +468,25 @@ int Menu::get_choice(const int lowerBound, const int upperBound) const {
 }
 bool Menu::log_in() {
 	std::cout << "Account Login\n";
-
-	std::cout << "Enter username: ";
 	std::string username;
-	std::getline(std::cin, username);
-
-	std::cout << "Enter password: ";
 	std::string password;
-	std::getline(std::cin, password);
-	std::cout << '\n';
 
-	user = userService->log_in(username, password);
-	return user != nullptr;
+	for (int failed = 1; failed <= 3; ++failed) {
+		std::cout << "Enter username: ";
+		std::getline(std::cin, username);
+
+		std::cout << "Enter password: ";
+		std::getline(std::cin, password);
+		std::cout << '\n';
+
+		user = userService->find_by_login(username, password);
+
+		if (user != nullptr) return true;
+
+		std::cout << "Invalid username/password. Failed attempts: " << failed << '\n';
+	}
+	
+	throw AuthenticationException();
 }
 void Menu::print_media(std::vector<std::unique_ptr<Media>>& items) {
 	if (items.empty()) {
@@ -470,7 +500,7 @@ void Menu::print_media(std::vector<std::unique_ptr<Media>>& items) {
 		<< std::setw(20) << std::left << "Title" << " | "
 		<< std::setw(30) << std::left << "Author" << " | "
 		<< std::setw(13) << std::left << "Purhcase Date" << " | "
-		<< std::setw(15) << std::left << "Extra1"
+		<< std::setw(15) << std::left << "Notes"
 		<< '\n';
 	std::cout << std::setw(114) << std::setfill('-') << "" << std::setfill(' ') << '\n';
 
@@ -489,7 +519,7 @@ void Menu::print_transactions(std::vector<std::unique_ptr<Transaction>>& transac
 		<< std::setw(7) << std::left << "MediaID" << " | "
 		<< std::setw(10) << std::left << "Loan Date" << " | "
 		<< std::setw(11) << std::left << "Return Date" << '\n';
-	std::cout << std::setw(42) << std::setfill('-') << "" << std::setfill(' ') << '\n';
+	std::cout << std::setw(43) << std::setfill('-') << "" << std::setfill(' ') << '\n';
 
 	for (const auto& transaction : transactions)
 		std::cout << transaction->print_cout() << '\n';

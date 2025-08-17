@@ -1,7 +1,5 @@
 #include "models/Media.h"
 
-#include <string>
-
 #include "utility.h"
 
 int Media::counter = 0;
@@ -12,7 +10,6 @@ Media::Media(const int _id, std::string _type, std::string _title, std::string _
 		counter = _id;
 }
 
-void Media::set_type(std::string _type) { type = _type; }
 void Media::set_title(std::string _title) { type = _title; }
 void Media::set_author(std::string _author) { type = _author; }
 

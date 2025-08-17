@@ -1,21 +1,20 @@
 #pragma once
 
 #include "models/User.h"
+#include "models/Media.h"
+#include "models/Transaction.h"
+
 #include "service/UserService.h"
 #include "service/MediaService.h"
 #include "service/TransactionService.h"
 
+#include <string>
 #include <memory>
 #include <vector>
 
-// Singleton
 class Menu {
 public:
-	static std::shared_ptr<Menu> get_instance(std::string, std::string, std::string);
-
-	// Prevent copy/assignment
-	Menu(const Menu&) = delete;
-	Menu& operator=(const Menu&) = delete;
+	Menu(std::string, std::string, std::string);
 
 	void run();
 
@@ -24,8 +23,6 @@ private:
 	std::unique_ptr<UserService> userService;
 	std::unique_ptr<MediaService> mediaService;
 	std::unique_ptr<TransactionService> transactionService;
-
-	Menu(std::string&, std::string&, std::string&);
 
 	bool main_menu();
 	void user_menu();
@@ -49,10 +46,10 @@ private:
 	void return_item();
 
 	void add_media();
-	void add_book(std::string&, std::string&, std::string&);
-	void add_ebook(std::string&, std::string&, std::string&);
-	void add_audio(std::string&, std::string&, std::string&);
-	void add_video(std::string&, std::string&, std::string&);
+	std::unique_ptr<Media> add_book(std::string&, std::string&, std::string&);
+	std::unique_ptr<Media> add_ebook(std::string&, std::string&, std::string&);
+	std::unique_ptr<Media> add_audio(std::string&, std::string&, std::string&);
+	std::unique_ptr<Media> add_video(std::string&, std::string&, std::string&);
 	void update_media();
 	void delete_media();
 

@@ -2,12 +2,10 @@
 
 #include "utility.h"
 
-#include <string>
 #include <fstream>
 #include <ctime>
 #include <sstream>
 #include <iomanip>
-#include <memory>
 
 Transaction::Transaction(const int _userId, const int _mediaId) : userId(_userId), mediaId(_mediaId), loanDate(utils::generate_date()), returnDate(generate_return_date(loanDate)) {}
 Transaction::Transaction(const int _userId, const int _mediaId, std::string _loanDate, std::string _returnDate) : userId(_userId), mediaId(_mediaId), loanDate(_loanDate), returnDate(_returnDate) {}
@@ -43,14 +41,11 @@ std::unique_ptr<Transaction> Transaction::clone() const {
 std::string Transaction::generate_return_date(const std::string& date) const {
 	std::tm tm{};
 	std::istringstream ss(date);
-	ss >> std::get_time(&tm, "%m/%d/%Y");
-
-	std::time_t t = std::mktime(&tm);
-
-	// Add 7 days
-	t += 7 * 24 * 60 * 60;
+	ss >> std::get_time(&tm, "%m/%d/%Y"); // Convert str to time struct tm
+	std::time_t t = std::mktime(&tm); // Convert tm to time_t
+	t += 7 * 24 * 60 * 60; // Add 7 days
 
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&t), "%m/%d/%Y");
+	oss << std::put_time(std::localtime(&t), "%m/%d/%Y"); // Convert back
 	return oss.str();
 }

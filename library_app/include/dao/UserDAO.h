@@ -24,6 +24,7 @@ public:
 	std::vector<std::unique_ptr<User>> find_all() const;
 
 	bool exists(const int) const;
+	bool exists(const std::string&) const;
 
 private:
 	std::string filename; // Data source

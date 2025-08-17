@@ -1,10 +1,14 @@
 #include "models/Patron.h"
 
-#include <string>
-#include <sstream>
+#include "exceptions/InvalidUserException.h"
 
-Patron::Patron(std::string _type, std::string _username, std::string _password, std::string _name, std::string _phone) : User(_type, _username, _password, _name), phone(_phone) {}
+Patron::Patron(std::string _type, std::string _username, std::string _password, std::string _name, std::string _phone) : User(_type, _username, _password, _name), phone(_phone) {
+	if (_type != "patron")
+        throw InvalidUserException("Creating Patron object of type \"" + _type + "\" is not allowed");
+}
 Patron::Patron(const int _id, std::string _type,  std::string _username, std::string _password, std::string _name, std::stringstream& ss) : User(_id, _type, _username, _password, _name) {
+	if (_type != "patron")
+        throw InvalidUserException("Creating Patron object of type \"" + _type + "\" is not allowed");
 	std::getline(ss, phone);
 }
 

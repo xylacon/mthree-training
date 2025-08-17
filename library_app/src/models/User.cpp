@@ -1,7 +1,5 @@
 #include "models/User.h"
 
-#include <string>
-
 #include "utility.h"
 
 int User::counter = 0;

@@ -2,6 +2,14 @@
 
 #include "models/Media.h"
 #include "models/Book.h"
+#include "models/EBook.h"
+#include "models/Audio.h"
+#include "models/Video.h"
+
+#include "exceptions/DataImportException.h"
+#include "exceptions/InvalidMediaException.h"
+#include "exceptions/ResourceNotFoundException.h"
+#include "exceptions/DuplicateResourceException.h"
 
 #include "utility.h"
 
@@ -19,35 +27,46 @@ std::shared_ptr<MediaDAO> MediaDAO::get_instance(std::string& _filename) {
 int MediaDAO::get_size() const { return items.size(); }
 
 void MediaDAO::insert(std::unique_ptr<Media> item) {
+	if (exists(item->get_id()))
+		throw DuplicateResourceException("Media ID already exists");
+	
 	items.push_back(std::move(item));
 
 	// Update data file
 	std::ofstream file(filename, std::ios::app);
-	if (!file) {
-		std::cerr << "Failed to open " << filename << '\n';
-		return;
-	}
+	if (!file)
+		throw DataImportException("Failed to open " + filename);
 
 	file << items.back()->print_csv() << '\n';
 }
 void MediaDAO::update(std::unique_ptr<Media> item) {
 	const int id = item->get_id();
+	bool found = false;
 	for (auto& i : items) {
 		if (i->get_id() == id) {
 			i = std::move(item);
+			found = true;
 			break;
 		}
 	}
 
+	if (!found)
+		throw ResourceNotFoundException("Media ID does not exist");
+
 	save_all();
 }
 void MediaDAO::remove(const int id) {
+	bool found = false;
 	for (auto it = items.begin(); it != items.end(); ++it) {
         if ((*it)->get_id() == id) {
             items.erase(it);
+			found = true;
 			break;
 		}
 	}
+
+	if (!found)
+		throw ResourceNotFoundException("Media ID does not exist");
 
 	save_all();
 }
@@ -112,10 +131,8 @@ void MediaDAO::load_all() {
 	}
 
 	std::ifstream file(filename);
-	if (!file) {
-		std::cerr << "Failed to open " << filename << '\n';
-		return;
-	}
+	if (!file)
+		throw DataImportException("Failed to open " + filename);
 
 	std::string line;
 	std::string idStr, type, title, author, purchaseDate;
@@ -131,12 +148,18 @@ void MediaDAO::load_all() {
 		std::getline(ss, author, ',');
 		std::getline(ss, purchaseDate, ',');
 
-		if (type == "book")
-			items.push_back(std::make_unique<Book>(id, type, title, author, purchaseDate, ss));
-		// else if (type == "admin")
-		// 	items.push_back(std::make_unique<Admin>(id, type, itemname, password, name, ss));
-		else
-			std::cout << "Could not read invalid item type.\n";
+		try {
+			if (type == "book")
+				items.push_back(std::make_unique<Book>(id, type, title, author, purchaseDate, ss));
+			else if (type == "ebook")
+				items.push_back(std::make_unique<EBook>(id, type, title, author, purchaseDate, ss));
+			else if (type == "audio")
+				items.push_back(std::make_unique<Audio>(id, type, title, author, purchaseDate, ss));
+			else if (type == "video")
+				items.push_back(std::make_unique<Video>(id, type, title, author, purchaseDate, ss));
+		} catch (const InvalidMediaException& ex) {
+			std::cerr << ex.what() << '\n';
+		}
 	}
 
 	file.close();
@@ -144,10 +167,8 @@ void MediaDAO::load_all() {
 
 void MediaDAO::save_all() {
 	std::ofstream file(filename);
-	if (!file) {
-		std::cerr << "Failed to open " << filename << '\n';
-		return;
-	}
+	if (!file)
+		throw DataImportException("Failed to open " + filename);
 
 	for (const auto& item : items)
 		file << item->print_csv() << '\n';

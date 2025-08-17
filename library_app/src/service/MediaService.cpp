@@ -1,12 +1,5 @@
 #include "service/MediaService.h"
 
-#include "models/Media.h"
-#include "dao/MediaDAO.h"
-
-#include <string>
-#include <iostream>
-#include <memory>
-
 MediaService::MediaService(std::string& filename) { dao = MediaDAO::get_instance(filename); }
 
 bool MediaService::exists(const int id) const {
@@ -16,19 +9,11 @@ bool MediaService::exists(const int id) const {
 void MediaService::add(Media& item) {
 	dao->insert(item.clone());
 }
-bool MediaService::update(Media& item) {
-	if (dao->exists(item.get_id())) {
-		dao->update(item.clone());
-		return true;
-	}
-		
-	return false;
+void MediaService::update(Media& item) {
+	dao->update(item.clone());
 }
 void MediaService::remove(const int id) {
-	if (dao->exists(id))
-		dao->remove(id);
-	else
-		std::cout << "Deletion failed. Media not found.\n";
+	dao->remove(id);
 }
 
 int MediaService::get_size() const {

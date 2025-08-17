@@ -57,6 +57,7 @@ std::unique_ptr<Transaction> TransactionDAO::find(const int userId, const int me
 	for (const auto& transaction : transactions)
         if (transaction->get_user_id() == userId && transaction->get_user_id() == mediaId)
             return transaction->clone();
+	return nullptr;
 }
 std::vector<std::unique_ptr<Transaction>> TransactionDAO::find_by_user_id(const int id) const {
 	std::vector<std::unique_ptr<Transaction>> copy;

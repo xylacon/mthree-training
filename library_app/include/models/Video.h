@@ -4,10 +4,10 @@
 
 #include <sstream>
 
-class Book : public Media {
+class Video : public Media {
 public:
-	Book(std::string, std::string, std::string, std::string);
-	Book(const int, std::string, std::string, std::string, std::string, std::stringstream&);
+	Video(std::string, std::string, std::string, std::string);
+	Video(const int, std::string, std::string, std::string, std::string, std::stringstream&);
 
 	std::string print_csv() const override;
 	std::string print_cout() const override;
@@ -15,5 +15,5 @@ public:
 	std::unique_ptr<Media> clone() const override;
 
 private:
-	std::string coverType;
+	std::string videoLength;
 };

@@ -1,11 +1,16 @@
 #include "models/Book.h"
 
-#include <string>
-#include <sstream>
+#include "exceptions/InvalidMediaException.h"
+
 #include <iomanip>
 
-Book::Book(std::string _type, std::string _title, std::string _author, std::string _coverType) : Media(_type, _title, _author), coverType(_coverType) {}
+Book::Book(std::string _type, std::string _title, std::string _author, std::string _coverType) : Media(_type, _title, _author), coverType(_coverType) {
+	if (_type != "book")
+        throw InvalidMediaException("Creating Book object of type \"" + _type + "\" is not allowed");
+}
 Book::Book(const int _id, std::string _type, std::string _title, std::string _author, std::string _purchaseDate, std::stringstream& ss) : Media(_id, _type, _title, _author, _purchaseDate) {
+	if (_type != "book")
+        throw InvalidMediaException("Creating Book object of type \"" + _type + "\" is not allowed");
 	std::getline(ss, coverType);
 }
 

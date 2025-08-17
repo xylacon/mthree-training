@@ -2,8 +2,6 @@
 
 #include "User.h"
 
-#include <string>
-#include <fstream>
 #include <sstream>
 
 class Patron : public User {

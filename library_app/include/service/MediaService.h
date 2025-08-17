@@ -1,6 +1,7 @@
 #pragma once
 
 #include "models/Media.h"
+
 #include "dao/MediaDAO.h"
 
 #include <vector>
@@ -12,7 +13,7 @@ public:
     MediaService(std::string&);
 
     void add(Media&);
-    bool update(Media&);
+    void update(Media&);
     void remove(const int);
 
     bool exists(const int id) const;

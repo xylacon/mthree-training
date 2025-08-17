@@ -13,7 +13,6 @@ public:
 	std::string get_author() const;
 	std::string get_type() const;
 
-	void set_type(std::string);
 	void set_title(std::string);
 	void set_author(std::string);
 
