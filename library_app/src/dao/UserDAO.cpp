@@ -14,7 +14,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <memory>
 
 // PUBLIC
 std::shared_ptr<UserDAO> UserDAO::get_instance(std::string& _filename) {

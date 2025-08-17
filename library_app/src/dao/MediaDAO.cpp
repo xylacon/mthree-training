@@ -16,7 +16,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <memory>
 
 // PUBLIC
 std::shared_ptr<MediaDAO> MediaDAO::get_instance(std::string& _filename) {

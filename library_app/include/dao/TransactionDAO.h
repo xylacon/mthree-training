@@ -25,7 +25,7 @@ public:
 	std::vector<std::unique_ptr<Transaction>> find_all() const;
 
 	bool exists(const int, const int) const;
-	bool exists_book(const int) const;
+	bool exists_media(const int) const;
 
 private:
 	std::string filename; // Data source

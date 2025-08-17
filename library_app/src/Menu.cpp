@@ -15,7 +15,7 @@
 #include "exceptions/InvalidMediaException.h"
 #include "exceptions/ResourceNotFoundException.h"
 #include "exceptions/DuplicateResourceException.h"
-#include "exceptions/BadOperationException.h"
+#include "exceptions/ResourceUnavailableException.h"
 
 #include <iostream>
 #include <iomanip>
@@ -143,8 +143,6 @@ bool Menu::admin_menu() {
 			try {
 				delete_media();
 				std::cout << "Item removed successfully.\n";
-			} catch (const BadOperationException& ex) {
-				std::cerr << ex.what() << "\nDelete failed\n";
 			} catch (const ResourceNotFoundException& ex) {
 				std::cerr << ex.what() << "\nDelete failed\n";
 			}
@@ -174,7 +172,14 @@ void Menu::rent_menu() {
 	const int choice = get_choice(1, 2);
 	switch (choice) {
 		case 1:
-			rent_item();
+			try {
+				rent_item();
+				std::cout << "Item checked out successfully.\n";
+			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nRent failed\n";
+			} catch (const DuplicateResourceException& ex) {
+				std::cerr << ex.what() << "\nYou already have this item on loan.\n";
+			}
 			break;
 		case 2:
 			std::cout << "Going back...\n";
@@ -221,10 +226,20 @@ void Menu::loan_menu() {
 	const int choice = get_choice(1, 3);
 	switch (choice) {
 		case 1:
-			renew_item();
+			try {
+				renew_item();
+				std::cout << "Item renewed successfully.\n";
+			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nYou do not have this item on loan\n";
+			}
 			break;
 		case 2:
-			return_item();
+			try {
+				return_item();
+				std::cout << "Item returned successfully.\n";
+			} catch (const ResourceNotFoundException& ex) {
+				std::cerr << ex.what() << "\nYou do not have this item on loan\n";
+			}
 			break;
 		case 3:
 			std::cout << "Going back...\n";
@@ -311,21 +326,16 @@ void Menu::rent_item() {
 
 	std::unique_ptr<Media> media = mediaService->find_by_id(mediaId);
 
-	if (media == nullptr) {
-		std::cout << "Item not found.\n";
-		return;
-	}
+	if (media == nullptr) 
+		throw ResourceNotFoundException("Media ID does not exist");
 
-	if (media->get_type() == "book" && transactionService->exists_book(mediaId)) {
+	if (media->get_type() == "book" && transactionService->exists_media(mediaId)) {
 		std::cout << "Book is already loaned out.\n";
 		return;
 	}
 
 	Transaction transaction(user->get_id(), mediaId);
-	if (transactionService->add(transaction))
-		std::cout << "Item checked out successfully.\n";
-	else 
-		std::cout << "You already have this item on loan.\n";
+	transactionService->add(transaction);
 }
 void Menu::renew_item() {
 	std::cout << "Enter the item's ID: ";
@@ -334,27 +344,18 @@ void Menu::renew_item() {
 
 	std::unique_ptr<Transaction> transaction = transactionService->find(user->get_id(), mediaId);
 
-	if (transaction == nullptr) {
-		std::cout << "Item not found.\n";
-		return;
-	}
+	if (transaction == nullptr)
+		throw ResourceNotFoundException("Transaction does not exist");
 
 	transaction->renew_media();
-
-	if (transactionService->update(*transaction))
-		std::cout << "Item renewed successfully.\n";
-	else 
-		std::cout << "Error renewing item.\n";
+	transactionService->update(*transaction);
 }
 void Menu::return_item() {
 	std::cout << "Enter the item's ID: ";
 	int mediaId;
 	std::cin >> mediaId;
 
-	if (transactionService->remove(user->get_id(), mediaId))
-		std::cout << "Item returned successfully.\n";
-	else 
-		std::cout << "Error returning item.\n";
+	transactionService->remove(user->get_id(), mediaId);
 }
 
 void Menu::add_media() {
@@ -447,8 +448,8 @@ void Menu::delete_media() {
 	int mediaId;
 	std::cin >> mediaId;
 
-	if (!transactionService->find_by_media_id(mediaId).empty())
-		throw BadOperationException("Item is on loan");
+	if (transactionService->exists_media(mediaId))
+		throw ResourceUnavailableException("Item is on loan");
 
 	mediaService->remove(mediaId);
 }
@@ -528,7 +529,7 @@ void Menu::print_transactions(std::vector<std::unique_ptr<Transaction>>& transac
 void Menu::remove_loaned_books(std::vector<std::unique_ptr<Media>>& items) {
 	auto it = items.begin();
 	while (it != items.end()) {
-		if ((*it)->get_type() == "book" && transactionService->exists_book((*it)->get_id()))
+		if ((*it)->get_type() == "book" && transactionService->exists_media((*it)->get_id()))
 			it = items.erase(it);
 		else
 			++it;

@@ -2,10 +2,6 @@
 
 MediaService::MediaService(std::string& filename) { dao = MediaDAO::get_instance(filename); }
 
-bool MediaService::exists(const int id) const {
-	return dao->exists(id);
-}
-
 void MediaService::add(Media& item) {
 	dao->insert(item.clone());
 }
@@ -14,6 +10,10 @@ void MediaService::update(Media& item) {
 }
 void MediaService::remove(const int id) {
 	dao->remove(id);
+}
+
+bool MediaService::exists(const int id) const {
+	return dao->exists(id);
 }
 
 int MediaService::get_size() const {
