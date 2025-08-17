@@ -4,6 +4,8 @@
 #include "service/MediaService.h"
 #include "service/TransactionService.h"
 
+#include "UI.h"
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -15,6 +17,8 @@ public:
 	void run();
 
 private:
+	UI ui;
+	
 	std::unique_ptr<User> user;
 	std::unique_ptr<UserService> userService;
 	std::unique_ptr<MediaService> mediaService;
@@ -49,9 +53,6 @@ private:
 	void update_media();
 	void delete_media();
 
-	int get_choice(const int, const int) const;
 	bool log_in();
-	void print_media(std::vector<std::unique_ptr<Media>>&);
-	void print_transactions(std::vector<std::unique_ptr<Transaction>>&);
 	void remove_loaned_books(std::vector<std::unique_ptr<Media>>&);
 };

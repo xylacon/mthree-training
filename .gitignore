@@ -10,7 +10,10 @@
 !*.cpp
 !*.h
 
-# Ignore vs code files
+# Allow data files
+!*.csv
+
+# Ignore vs-code files
 .vscode
 
 # Ignore other

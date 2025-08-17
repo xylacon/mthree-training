@@ -1,3 +1,21 @@
+/*
+	This is the universal controller/UI system. This class manages:
+	- User input
+	- Console output
+	- CRUD requests
+	- Exception handling
+
+	Admittedly, this class is very large and should be broken up into
+	separate classes. I started by moving UI-related functions to their
+	own UI class, but I unfortunately ran out of time and could not
+	implement further changes.
+	
+	My next steps would be to decouple the user request logic into
+	their own controllers. I would also move the service-related
+	actions to a handler class, which would then communicate directly
+	with the services.
+*/
+
 #include "Menu.h"
 
 #include "models/Book.h"
@@ -34,7 +52,7 @@ bool Menu::main_menu() {
 		<< "2. Quit\n"
 		<< '\n';
 
-	const int choice = get_choice(1, 2);
+	const int choice =  ui.get_choice(1, 2);
 	switch (choice) {
 		case 1:
 			try {
@@ -71,7 +89,7 @@ bool Menu::patron_menu() {
 		<< "4. Log out\n"
 		<< '\n';
 
-	const int choice = get_choice(1, 4);
+	const int choice =  ui.get_choice(1, 4);
 	switch (choice) {
 		case 1:
 			get_all_available_media();
@@ -105,7 +123,7 @@ bool Menu::admin_menu() {
 		<< "8. Log out\n"
 		<< '\n';
 
-	const int choice = get_choice(1, 8);
+	const int choice =  ui.get_choice(1, 8);
 	switch (choice) {
 		case 1:
 			get_all_media();
@@ -161,7 +179,7 @@ void Menu::rent_menu() {
 		<< "2. Go back\n"
 		<< '\n';
 	
-	const int choice = get_choice(1, 2);
+	const int choice =  ui.get_choice(1, 2);
 	switch (choice) {
 		case 1:
 			try {
@@ -189,7 +207,7 @@ void Menu::search_menu() {
 		<< "4. Go back\n"
 		<< '\n';
 	
-	const int choice = get_choice(1, 4);
+	const int choice =  ui.get_choice(1, 4);
 	switch (choice) {
 		case 1:
 			get_by_title();
@@ -216,7 +234,7 @@ void Menu::loan_menu() {
 		<< "3. Go back\n"
 		<< '\n';
 	
-	const int choice = get_choice(1, 3);
+	const int choice =  ui.get_choice(1, 3);
 	switch (choice) {
 		case 1:
 			try {
@@ -245,14 +263,14 @@ void Menu::loan_menu() {
 void Menu::get_all_media() {
 	std::vector<std::unique_ptr<Media>> items = mediaService->find_all();
 	std::cout << "All media in library...\n";
-	print_media(items);
+	 ui.print_media(items);
 }
 void Menu::get_all_available_media() {
 	std::vector<std::unique_ptr<Media>> items = mediaService->find_all();
 	remove_loaned_books(items);
 
 	std::cout << "All available media in library...\n";
-	print_media(items);
+	 ui.print_media(items);
 	if (!items.empty()) rent_menu();
 }
 void Menu::get_by_title() {
@@ -263,11 +281,11 @@ void Menu::get_by_title() {
 
 	if (user->get_type() == "patron") {
 		remove_loaned_books(items);
-		print_media(items);
+		 ui.print_media(items);
 		if (!items.empty()) rent_menu();
 	}
 	else
-		print_media(items);
+		 ui.print_media(items);
 }
 void Menu::get_by_author() {
 	std::cout << "Enter author: ";
@@ -277,11 +295,11 @@ void Menu::get_by_author() {
 	
 	if (user->get_type() == "patron") {
 		remove_loaned_books(items);
-		print_media(items);
+		 ui.print_media(items);
 		if (!items.empty()) rent_menu();
 	}
 	else
-		print_media(items);
+		 ui.print_media(items);
 }
 void Menu::get_by_type() {
 	std::cout
@@ -291,7 +309,7 @@ void Menu::get_by_type() {
 		<< "4. Video\n"
 		<< '\n';
 	
-	const int choice = get_choice(1, 4);
+	const int choice =  ui.get_choice(1, 4);
 	std::string type;
 	switch (choice) {
 		case 1:
@@ -314,24 +332,24 @@ void Menu::get_by_type() {
 	if (user->get_type() == "patron") {
 		if (type == "book")
 			remove_loaned_books(items);
-		print_media(items);
+		 ui.print_media(items);
 		if (!items.empty()) rent_menu();
 	}
 	else
-		print_media(items);
+		 ui.print_media(items);
 }
 
 void Menu::get_loans() {
 	std::vector<std::unique_ptr<Transaction>> transactions = transactionService->find_by_user_id(user->get_id());
 
 	std::cout << "Your current loans\n";
-	print_transactions(transactions);
+	 ui.print_transactions(transactions);
 }
 void Menu::get_all_loans() {
 	std::vector<std::unique_ptr<Transaction>> transactions = transactionService->find_all();
 
 	std::cout << "All current loans\n";
-	print_transactions(transactions);
+	 ui.print_transactions(transactions);
 }
 
 void Menu::rent_item() {
@@ -469,19 +487,6 @@ void Menu::delete_media() {
 	mediaService->remove(mediaId);
 }
 
-int Menu::get_choice(const int lowerBound, const int upperBound) const {
-	int choice;
-	while (true) {
-		std::cout << "Choose an option: ";
-		std::cin >> choice;
-		if (choice >= lowerBound && choice <= upperBound) break;
-		std::cout << "Invalid choice. Please try again.\n";
-	}
-	std::cout << '\n';
-	std::cin.ignore();
-
-	return choice;
-}
 bool Menu::log_in() {
 	std::cout << "Account Login\n";
 	std::string username;
@@ -503,43 +508,6 @@ bool Menu::log_in() {
 	}
 	
 	throw AuthenticationException();
-}
-void Menu::print_media(std::vector<std::unique_ptr<Media>>& items) {
-	if (items.empty()) {
-		std::cout << "No media to show.\n";
-		return;
-	}
-
-	std::cout
-		<< std::setw(6) << std::left << "ID" << " | "
-		<< std::setw(5) << std::left << "Type" << " | "
-		<< std::setw(25) << std::left << "Title" << " | "
-		<< std::setw(20) << std::left << "Author" << " | "
-		<< std::setw(13) << std::left << "Purhcase Date" << " | "
-		<< std::setw(10) << std::left << "Note"
-		<< '\n';
-	std::cout << std::setw(94) << std::setfill('-') << "" << std::setfill(' ') << '\n';
-
-	for (const auto& item : items)
-		std::cout << item->print_cout() << '\n';
-	std::cout << '\n';
-}
-void Menu::print_transactions(std::vector<std::unique_ptr<Transaction>>& transactions) {
-	if (transactions.empty()) {
-		std::cout << "No media to show.\n";
-		return;
-	}
-
-	std::cout
-		<< std::setw(6) << std::left << "UserID" << " | "
-		<< std::setw(7) << std::left << "MediaID" << " | "
-		<< std::setw(10) << std::left << "Loan Date" << " | "
-		<< std::setw(11) << std::left << "Return Date" << '\n';
-	std::cout << std::setw(43) << std::setfill('-') << "" << std::setfill(' ') << '\n';
-
-	for (const auto& transaction : transactions)
-		std::cout << transaction->print_cout() << '\n';
-	std::cout << '\n';
 }
 void Menu::remove_loaned_books(std::vector<std::unique_ptr<Media>>& items) {
 	auto it = items.begin();
