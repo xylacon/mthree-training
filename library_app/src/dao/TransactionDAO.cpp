@@ -66,9 +66,8 @@ void TransactionDAO::remove(const int userId, const int mediaId) {
 }
 
 std::unique_ptr<Transaction> TransactionDAO::find(const int userId, const int mediaId) const {
-	std::vector<std::unique_ptr<Transaction>> copy;
 	for (const auto& transaction : transactions)
-        if (transaction->get_user_id() == userId && transaction->get_user_id() == mediaId)
+        if (transaction->get_user_id() == userId && transaction->get_media_id() == mediaId)
             return transaction->clone();
 	return nullptr;
 }

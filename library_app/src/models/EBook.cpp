@@ -1,16 +1,16 @@
 #include "models/EBook.h"
 
-#include "exceptions/InvalidMediaException.h"
+#include "exceptions/InvalidResourceException.h"
 
 #include <iomanip>
 
 EBook::EBook(std::string _type, std::string _title, std::string _author, std::string _downloadSize) : Media(_type, _title, _author), downloadSize(_downloadSize) {
 	if (_type != "ebook")
-        throw InvalidMediaException("Creating EBook object of type \"" + _type + "\" is not allowed");
+        throw InvalidResourceException("Creating EBook object of type \"" + _type + "\" is not allowed");
 }
 EBook::EBook(const int _id, std::string _type, std::string _title, std::string _author, std::string _purchaseDate, std::stringstream& ss) : Media(_id, _type, _title, _author, _purchaseDate) {
 	if (_type != "ebook")
-        throw InvalidMediaException("Creating EBook object of type \"" + _type + "\" is not allowed");
+        throw InvalidResourceException("Creating EBook object of type \"" + _type + "\" is not allowed");
 	std::getline(ss, downloadSize);
 }
 
@@ -28,10 +28,10 @@ std::string EBook::print_cout() const {
 	std::ostringstream oss;
 	oss << std::setw(6) << id << " | "
 		<< std::setw(5) << std::left << type << " | "
-		<< std::setw(20) << std::left << title << " | "
-		<< std::setw(30) << std::left << author << " | "
+		<< std::setw(25) << std::left << title << " | "
+		<< std::setw(20) << std::left << author << " | "
 		<< std::setw(13) << purchaseDate << " | "
-		<< std::setw(15) << std::left << downloadSize;
+		<< std::setw(10) << std::left << downloadSize;
 	return oss.str();
 }
 

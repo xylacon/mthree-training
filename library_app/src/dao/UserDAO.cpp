@@ -5,7 +5,7 @@
 #include "models/Admin.h"
 
 #include "exceptions/DataImportException.h"
-#include "exceptions/InvalidUserException.h"
+#include "exceptions/InvalidResourceException.h"
 #include "exceptions/ResourceNotFoundException.h"
 #include "exceptions/DuplicateResourceException.h"
 
@@ -133,7 +133,7 @@ void UserDAO::load_all() {
 				users.push_back(std::make_unique<Patron>(id, type, username, password, name, ss));
 			else if (type == "admin")
 				users.push_back(std::make_unique<Admin>(id, type, username, password, name, ss));
-		} catch (const InvalidUserException& ex) {
+		} catch (const InvalidResourceException& ex) {
 			std::cerr << ex.what() << '\n';
 		}
 	}

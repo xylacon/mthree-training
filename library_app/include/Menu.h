@@ -1,9 +1,5 @@
 #pragma once
 
-#include "models/User.h"
-#include "models/Media.h"
-#include "models/Transaction.h"
-
 #include "service/UserService.h"
 #include "service/MediaService.h"
 #include "service/TransactionService.h"

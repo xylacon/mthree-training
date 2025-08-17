@@ -1,16 +1,16 @@
 #include "models/Audio.h"
 
-#include "exceptions/InvalidMediaException.h"
+#include "exceptions/InvalidResourceException.h"
 
 #include <iomanip>
 
 Audio::Audio(std::string _type, std::string _title, std::string _author, std::string _audioLength) : Media(_type, _title, _author), audioLength(_audioLength) {
 	if (_type != "audio")
-        throw InvalidMediaException("Creating Audio object of type \"" + _type + "\" is not allowed");
+        throw InvalidResourceException("Creating Audio object of type \"" + _type + "\" is not allowed");
 }
 Audio::Audio(const int _id, std::string _type, std::string _title, std::string _author, std::string _purchaseDate, std::stringstream& ss) : Media(_id, _type, _title, _author, _purchaseDate) {
 	if (_type != "audio")
-        throw InvalidMediaException("Creating Audio object of type \"" + _type + "\" is not allowed");
+        throw InvalidResourceException("Creating Audio object of type \"" + _type + "\" is not allowed");
 	std::getline(ss, audioLength);
 }
 
@@ -28,10 +28,10 @@ std::string Audio::print_cout() const {
 	std::ostringstream oss;
 	oss << std::setw(6) << id << " | "
 		<< std::setw(5) << std::left << type << " | "
-		<< std::setw(20) << std::left << title << " | "
-		<< std::setw(30) << std::left << author << " | "
+		<< std::setw(25) << std::left << title << " | "
+		<< std::setw(20) << std::left << author << " | "
 		<< std::setw(13) << purchaseDate << " | "
-		<< std::setw(15) << std::left << audioLength;
+		<< std::setw(10) << std::left << audioLength;
 	return oss.str();
 }
 

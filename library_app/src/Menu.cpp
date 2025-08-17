@@ -1,27 +1,19 @@
 #include "Menu.h"
 
-#include "models/Media.h"
 #include "models/Book.h"
 #include "models/EBook.h"
 #include "models/Audio.h"
 #include "models/Video.h"
 
-#include "service/UserService.h"
-#include "service/MediaService.h"
-#include "service/TransactionService.h"
-
 #include "exceptions/LibraryException.h"
 #include "exceptions/AuthenticationException.h"
-#include "exceptions/InvalidMediaException.h"
+#include "exceptions/InvalidResourceException.h"
 #include "exceptions/ResourceNotFoundException.h"
 #include "exceptions/DuplicateResourceException.h"
 #include "exceptions/ResourceUnavailableException.h"
 
 #include <iostream>
 #include <iomanip>
-#include <string>
-#include <memory>
-#include <vector>
 
 // Public
 Menu::Menu(std::string userData, std::string mediaData, std::string transactionData) {
@@ -65,6 +57,7 @@ bool Menu::main_menu() {
 	return true;
 }
 void Menu::user_menu() {
+	std::cout << "Hello " << user->get_name() << "\n\n";
 	if (user->get_type() == "patron")
 		while (patron_menu());
 	else if (user->get_type() == "admin")
@@ -72,7 +65,6 @@ void Menu::user_menu() {
 }
 bool Menu::patron_menu() {
 	std::cout
-		<< "Hello " << user->get_name() << "\n\n"
 		<< "1. See all available media\n"
 		<< "2. Search\n"
 		<< "3. See my rentals\n"
@@ -88,7 +80,7 @@ bool Menu::patron_menu() {
 			search_menu();
 			break;
 		case 3:
-			get_loans();
+			loan_menu();
 			break;
 		case 4:
 			std::cout << "Logging out...\n";
@@ -125,7 +117,7 @@ bool Menu::admin_menu() {
 			try {
 				add_media();
 				std::cout << "Item added.\n";
-			} catch (const InvalidMediaException& ex) {
+			} catch (const InvalidResourceException& ex) {
 				std::cerr << ex.what() << "\nAdd failed\n";
 			} catch (const DuplicateResourceException& ex) {
 				std::cerr << ex.what() << "\nAdd failed\n";
@@ -190,9 +182,10 @@ void Menu::rent_menu() {
 }
 void Menu::search_menu() {
 	std::cout
-		<< "1. By title\n"
-		<< "2. By author\n"
-		<< "3. By type\n"
+		<< "Search by...\n"
+		<< "1. Title\n"
+		<< "2. Author\n"
+		<< "3. Type\n"
 		<< "4. Go back\n"
 		<< '\n';
 	
@@ -291,10 +284,32 @@ void Menu::get_by_author() {
 		print_media(items);
 }
 void Menu::get_by_type() {
-	std::cout << "Enter type: ";
+	std::cout
+		<< "1. Book\n"
+		<< "2. EBook\n"
+		<< "3. Audio\n"
+		<< "4. Video\n"
+		<< '\n';
+	
+	const int choice = get_choice(1, 4);
 	std::string type;
-	std::getline(std::cin, type);
-	std::vector<std::unique_ptr<Media>> items = mediaService->find_by_title(type);
+	switch (choice) {
+		case 1:
+			type = "book";
+			break;
+		case 2:
+			type = "ebook";
+			break;
+		case 3:
+			type = "audio";
+			break;
+		case 4:
+			type = "video";
+			break;
+		default:
+			std::cout << "Error: Invalid choice.\n";
+	}
+	std::vector<std::unique_ptr<Media>> items = mediaService->find_by_type(type);
 
 	if (user->get_type() == "patron") {
 		if (type == "book")
@@ -498,12 +513,12 @@ void Menu::print_media(std::vector<std::unique_ptr<Media>>& items) {
 	std::cout
 		<< std::setw(6) << std::left << "ID" << " | "
 		<< std::setw(5) << std::left << "Type" << " | "
-		<< std::setw(20) << std::left << "Title" << " | "
-		<< std::setw(30) << std::left << "Author" << " | "
+		<< std::setw(25) << std::left << "Title" << " | "
+		<< std::setw(20) << std::left << "Author" << " | "
 		<< std::setw(13) << std::left << "Purhcase Date" << " | "
-		<< std::setw(15) << std::left << "Notes"
+		<< std::setw(10) << std::left << "Note"
 		<< '\n';
-	std::cout << std::setw(114) << std::setfill('-') << "" << std::setfill(' ') << '\n';
+	std::cout << std::setw(94) << std::setfill('-') << "" << std::setfill(' ') << '\n';
 
 	for (const auto& item : items)
 		std::cout << item->print_cout() << '\n';

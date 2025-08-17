@@ -7,7 +7,7 @@
 #include "models/Video.h"
 
 #include "exceptions/DataImportException.h"
-#include "exceptions/InvalidMediaException.h"
+#include "exceptions/InvalidResourceException.h"
 #include "exceptions/ResourceNotFoundException.h"
 #include "exceptions/DuplicateResourceException.h"
 
@@ -156,7 +156,7 @@ void MediaDAO::load_all() {
 				items.push_back(std::make_unique<Audio>(id, type, title, author, purchaseDate, ss));
 			else if (type == "video")
 				items.push_back(std::make_unique<Video>(id, type, title, author, purchaseDate, ss));
-		} catch (const InvalidMediaException& ex) {
+		} catch (const InvalidResourceException& ex) {
 			std::cerr << ex.what() << '\n';
 		}
 	}

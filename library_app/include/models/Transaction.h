@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ctime>
 #include <memory>
 
 class Transaction {
@@ -25,4 +26,5 @@ private:
 	std::string returnDate;
 
 	std::string generate_return_date(const std::string&) const;
+	std::string generate_return_date(time_t) const;
 };

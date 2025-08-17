@@ -12,7 +12,7 @@ namespace utils {
 	}
 
 	std::string generate_date() {
-		std::time_t t = std::time({});
+		std::time_t t = std::time(0);
 		std::ostringstream oss;
 		oss << std::put_time(std::localtime(&t), "%m/%d/%Y");
 
